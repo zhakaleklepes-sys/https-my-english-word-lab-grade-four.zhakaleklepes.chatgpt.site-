@@ -21,3 +21,10 @@ $('search').oninput=render;$('hide').onclick=()=>{hidden=!hidden;render()};$('le
 (p/'dist/index.html').write_text(html)
 m=json.loads((p/'.openai/hosting.json').read_text());m['static']={'directory':'dist'};(p/'.openai/hosting.json').write_text(json.dumps(m))
 print('Built',sum(len(u['words']) for u in data),'bilingual cards')
+
+# Include unit activities in every rebuild.
+import shutil
+h=p/"dist/index.html"
+s=h.read_text().replace("</head>",'<link rel="stylesheet" href="activities.css"></head>').replace("</body>",'<script src="activities.js"></script></body>')
+h.write_text(s)
+for f in ["activities.js","activities.css"]: shutil.copyfile(p/f,p/"dist"/f)
