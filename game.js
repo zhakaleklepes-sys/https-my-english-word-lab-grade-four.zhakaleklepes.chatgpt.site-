@@ -14,6 +14,6 @@ const gameFinish=finish;finish=function(){gameFinish();if(!session.gameAwarded){
 // Refresh points after a response without rebuilding the active matching board.
 panel.addEventListener('click',()=>paintGameHUD());
 const heroStart=button('ОЙНАУДЫ БАСТАУ →',()=>{mode='adventure';session=null;render();panel.scrollIntoView({behavior:'smooth',block:'start'})},'primary hero-start');document.querySelector('.hero-copy').append(heroStart);
-document.querySelector('.hero h1').innerHTML='Play with words.<br><em>Learn for life.</em>';
+
 const footer=document.querySelector('footer');footer.append(el('p','Сөз карточкаларындағы фотореалистік бейнелер AI көмегімен жасалған.'));
 mode='adventure';updateActivity();
