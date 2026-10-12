@@ -1,6 +1,6 @@
 // Game home, level selection and locally saved points per student.
 let gameScores={};try{gameScores=JSON.parse(localStorage.getItem('wordlab-game-scores-v1')||'{}')}catch{}
-const topics=['School days','Family & home','Play & music','Jobs & helpers','Wonder 1','Food time','Animal world','Places to explore','Future & technology','Wonder 2','The Cuckoo','Dancing Tortoise'];
+const topics=['School days','Family & home','Play & music','Jobs & helpers','A World of Wonder 1','Food time','Animal world','Places to explore','Future & technology','A World of Wonder 2','The Cuckoo','The Dancing Tortoise'];
 const covers=[9,8,2,4,3,20,28,6,1,6,0,2];
 const gameNav=button('🎮 Ойын картасы',()=>{mode='adventure';session=null;render()},'control');activityBar.prepend(gameNav);
 function playerKey(){return (student||'Қонақ').trim().toLocaleLowerCase()}
@@ -17,3 +17,9 @@ const heroStart=button('ОЙНАУДЫ БАСТАУ →',()=>{mode='adventure';s
 
 const footer=document.querySelector('footer');footer.append(el('p','Сөз карточкаларындағы фотореалистік бейнелер AI көмегімен жасалған.'));
 mode='adventure';updateActivity();
+
+// Unit selection opens its vocabulary, including the supplementary sections.
+$('units').querySelectorAll('button').forEach((b,i)=>{
+  b.onclick=()=>{unit=i;mode='learn';session=null;$('search').value='';render()};
+  b.setAttribute('aria-label',DATA[i].name.replace('Module','Unit')+' — '+DATA[i].words.length+' сөз');
+});
