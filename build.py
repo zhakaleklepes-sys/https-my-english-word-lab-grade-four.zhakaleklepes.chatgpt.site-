@@ -2,6 +2,13 @@ import json,pathlib
 p=pathlib.Path(__file__).parent
 data=json.loads((p/'data.json').read_text())
 icons=['🔁 🎨 📚 🇬🇧 500 📅 🌍 🌅 🛏️ 🏫 🥣 🍽️ 🥪 📜 💻 ➕ 📅 🎵 🚫 900 🔄 1000 🏃 📅 🔬 ⏳ ☀️ 300 📅 😴 📅 200 🔁 📺 📅','👩 🤫 🍬 🧒 🍽️ 🛒 🗑️ 🐠 👵 📢 🛏️ 👨‍👩‍👧 📣 🗑️ 🧹 👨 🦮 🪴 👔','🏸 ⚾ 🏀 🏏 🪕 🥁 🪈 🏁 🏒 🏃 🎻 🥅 🎲 ♟️ 🙈 🔢 🏃 🎾 🏉 🪢 🏑 🏓 🥁 🎻 🎶','🎒 👨‍🍳 📬 🥼 🧑‍⚕️ 👩‍🌾 🚒 🧑‍🚒 🥬 🍎 🪖 🩺 🍞 👮 📮 🥕 🚜 👔 🚐 🐾','😊 ☀️ 🇰🇿 🌳 ⛸️','🥩 🍪 🍫 🍞 🧈 🥣 🍗 ☕ 🥤 🌽 🥔 🐟 🍋 🥬 🍭 🥛 🍜 🫒 🍝 🫛 🍕 🍚 🧂 🌭 🍋 🥩 🧊 🍯 🐟 🍶 🥣','🧍 🐪 🐔 🐄 🐊 🐬 🦆 👂 🐘 👀 🐐 🦍 🙂 🐎 🌴 🥚 🦵 🦎 👄 👃 🌊 🐧 🐻‍❄️ 🧊 🐑 🌾 🐒 🦷 🐅 🐋','🏦 🥩 🏴 🌲 🇬🇧 🏨 🏝️ 🇰🇿 🏞️ 📚 ⛰️ 🏛️ ☘️ 🏞️ 🏴 🏟️ 🐉','🎭 🧑‍🚀 🏅 🔋 📷 ⚡ 🎮 🎧 💻 🧑‍🎨 🎛️ 🎤 📱 ⌚ ✍️','🦡 🐦 🐻 🦅 🪶 🐒 🍓','🐦 🌲 🐾 🌱','🪺 💧 🐢']
+# Keep the two “A World of Wonder” reviews with the units they recap.
+for review_name, unit_name in [('A World of Wonder 1','Module 4'),('A World of Wonder 2','Module 8')]:
+ review_i=next(i for i,u in enumerate(data) if u['name']==review_name)
+ unit_i=next(i for i,u in enumerate(data) if u['name']==unit_name)
+ data[unit_i]['words'].extend(data[review_i]['words'])
+ icons[unit_i]+=' '+icons[review_i]
+ data.pop(review_i);icons.pop(review_i)
 for u,ii in zip(data,icons):
  ii=ii.split();assert len(ii)==len(u['words']),(u['name'],len(ii),len(u['words']))
  for w,ic in zip(u['words'],ii):w.append(ic)
