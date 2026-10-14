@@ -1,7 +1,7 @@
 // Game home, level selection and locally saved points per student.
 let gameScores={};try{gameScores=JSON.parse(localStorage.getItem('wordlab-game-scores-v1')||'{}')}catch{}
-const topics=['School days','Family & home','Play & music','Jobs & helpers','A World of Wonder 1','Food time','Animal world','Places to explore','Future & technology','A World of Wonder 2','The Cuckoo','The Dancing Tortoise'];
-const covers=[9,8,2,4,3,20,28,6,1,6,0,2];
+const topics=['School days','Family & home','Play & music','Jobs & helpers','Food time','Animal world','Places to explore','Future & technology'];
+const covers=[9,8,2,4,20,28,6,1];
 const gameNav=button('🎮 Ойын картасы',()=>{mode='adventure';session=null;render()},'control');activityBar.prepend(gameNav);
 function playerKey(){return (student||'Қонақ').trim().toLocaleLowerCase()}
 function playerScores(){return gameScores[playerKey()]||{xp:0,stages:{}}}
