@@ -1,14 +1,8 @@
 import json,pathlib
 p=pathlib.Path(__file__).parent
-data=json.loads((p/'data.json').read_text())
+data=json.loads((p/'data.json').read_text(encoding='utf-8'))
 icons=['🔁 🎨 📚 🇬🇧 500 📅 🌍 🌅 🛏️ 🏫 🥣 🍽️ 🥪 📜 💻 ➕ 📅 🎵 🚫 900 🔄 1000 🏃 📅 🔬 ⏳ ☀️ 300 📅 😴 📅 200 🔁 📺 📅','👩 🤫 🍬 🧒 🍽️ 🛒 🗑️ 🐠 👵 📢 🛏️ 👨‍👩‍👧 📣 🗑️ 🧹 👨 🦮 🪴 👔','🏸 ⚾ 🏀 🏏 🪕 🥁 🪈 🏁 🏒 🏃 🎻 🥅 🎲 ♟️ 🙈 🔢 🏃 🎾 🏉 🪢 🏑 🏓 🥁 🎻 🎶','🎒 👨‍🍳 📬 🥼 🧑‍⚕️ 👩‍🌾 🚒 🧑‍🚒 🥬 🍎 🪖 🩺 🍞 👮 📮 🥕 🚜 👔 🚐 🐾','😊 ☀️ 🇰🇿 🌳 ⛸️','🥩 🍪 🍫 🍞 🧈 🥣 🍗 ☕ 🥤 🌽 🥔 🐟 🍋 🥬 🍭 🥛 🍜 🫒 🍝 🫛 🍕 🍚 🧂 🌭 🍋 🥩 🧊 🍯 🐟 🍶 🥣','🧍 🐪 🐔 🐄 🐊 🐬 🦆 👂 🐘 👀 🐐 🦍 🙂 🐎 🌴 🥚 🦵 🦎 👄 👃 🌊 🐧 🐻‍❄️ 🧊 🐑 🌾 🐒 🦷 🐅 🐋','🏦 🥩 🏴 🌲 🇬🇧 🏨 🏝️ 🇰🇿 🏞️ 📚 ⛰️ 🏛️ ☘️ 🏞️ 🏴 🏟️ 🐉','🎭 🧑‍🚀 🏅 🔋 📷 ⚡ 🎮 🎧 💻 🧑‍🎨 🎛️ 🎤 📱 ⌚ ✍️','🦡 🐦 🐻 🦅 🪶 🐒 🍓','🐦 🌲 🐾 🌱','🪺 💧 🐢']
-# Keep the two “A World of Wonder” reviews with the units they recap.
-for review_name, unit_name in [('A World of Wonder 1','Module 4'),('A World of Wonder 2','Module 8'),('The Cuckoo','Module 7'),('The Dancing Tortoise','Module 8')]:
- review_i=next(i for i,u in enumerate(data) if u['name']==review_name)
- unit_i=next(i for i,u in enumerate(data) if u['name']==unit_name)
- data[unit_i]['words'].extend(data[review_i]['words'])
- icons[unit_i]+=' '+icons[review_i]
- data.pop(review_i);icons.pop(review_i)
+# Keep every supplementary story/review as its own selectable section.
 for u,ii in zip(data,icons):
  ii=ii.split();assert len(ii)==len(u['words']),(u['name'],len(ii),len(u['words']))
  for w,ic in zip(u['words'],ii):w.append(ic)
@@ -25,37 +19,37 @@ function render(){document.querySelectorAll('.unit').forEach((b,i)=>{b.classList
 rows.forEach(({w,id,ui,wi})=>{let card=document.createElement('article');card.className='card';card.style.setProperty('--bg',colors[wi%colors.length]);card.innerHTML='<div class="visual"><span class="number"></span><span class="symbol" aria-hidden="true"></span><button class="save" title="Жаттадым"></button></div><div class="body"><div class="en" lang="en"></div><button class="translation" lang="kk"></button><div class="foot"><small>ENGLISH → ҚАЗАҚША</small><button class="audio">🔊</button></div></div>';card.querySelector('.number').textContent=q?DATA[ui].name.replace('Module','Unit'):String(wi+1).padStart(2,'0');card.querySelector('.symbol').replaceWith(photoForWord(w));card.querySelector('.en').textContent=w[0];let tr=card.querySelector('.translation');tr.textContent=hidden?'Аударманы ашу ↗':w[1];tr.classList.toggle('masked',hidden);tr.onclick=()=>{tr.textContent=w[1];tr.classList.remove('masked')};let b=card.querySelector('.save');b.textContent=saved.has(id)?'✓':'☆';b.classList.toggle('yes',saved.has(id));b.setAttribute('aria-label',w[0]+' — жаттадым');b.setAttribute('aria-pressed',saved.has(id));b.onclick=()=>{saved.has(id)?saved.delete(id):saved.add(id);save();render()};let a=card.querySelector('.audio');a.setAttribute('aria-label',w[0]+' — тыңдау');a.onclick=()=>speak(w[0]);$('grid').append(card)});if(!rows.length){let e=document.createElement('div');e.className='empty';e.textContent=onlyLearned?'Әзірге белгіленген сөз жоқ. ☆ батырмасымен сөздерді белгіле.':'Сөз табылмады. Басқа сөз жазып көр.';$('grid').append(e)}}
 $('search').oninput=render;$('hide').onclick=()=>{hidden=!hidden;render()};$('learned').onclick=()=>{onlyLearned=!onlyLearned;render()};render();
 </script></body></html>'''.replace('__DATA__',json.dumps(data,ensure_ascii=False))
-(p/'dist/index.html').write_text(html)
-m=json.loads((p/'.openai/hosting.json').read_text());m['static']={'directory':'dist'};(p/'.openai/hosting.json').write_text(json.dumps(m))
+(p/'dist/index.html').write_text(html,encoding='utf-8')
+m=json.loads((p/'.openai/hosting.json').read_text(encoding='utf-8'));m['static']={'directory':'dist'};(p/'.openai/hosting.json').write_text(json.dumps(m),encoding='utf-8')
 print('Built',sum(len(u['words']) for u in data),'bilingual cards')
 
 # Include unit activities in every rebuild.
 import shutil
 h=p/"dist/index.html"
-s=h.read_text().replace("</head>",'<link rel="stylesheet" href="activities.css"></head>').replace("</body>",'<script src="activities.js"></script></body>')
-h.write_text(s)
+s=h.read_text(encoding='utf-8').replace("</head>",'<link rel="stylesheet" href="activities.css"></head>').replace("</body>",'<script src="activities.js"></script></body>')
+h.write_text(s,encoding='utf-8')
 for f in ["activities.js","activities.css"]: shutil.copyfile(p/f,p/"dist"/f)
 # Natural photographic hero and fresh classroom palette.
 import re
-hero='''<section class="hero portrait-hero"><div class="hero-title"><span class="eyebrow">GRADE 4 · ENGLISH + ҚАЗАҚША</span><h1>My English Word Lab</h1></div><figure class="hero-photo"><img src="assets/student-school-hall.png" alt="Мектеп коридорунда англис тили китебин кармап турган окуучу" fetchpriority="high" width="1254" height="1254"></figure><div class="hero-copy"><h2>Сөздер әлеміне<br>бірге саяхаттайық!</h2><p>Суретпен үйрен, тыңда және ойна.<br>Әр жаңа сөз — жаңа жетістік!</p><div class="pills"><span>8 unit</span><span>211 сөз бен тіркес</span><span>Ойын + білім</span></div></div></section>'''
+hero=f'''<section class="hero portrait-hero"><div class="hero-title"><span class="eyebrow">GRADE 4 · ENGLISH + ҚАЗАҚША</span><h1>My English Word Lab</h1></div><figure class="hero-photo"><img src="assets/student-school-hall.png" alt="Мектеп коридорында ағылшын тілі кітабын ұстап тұрған оқушы" fetchpriority="high" width="1254" height="1254"></figure><div class="hero-copy"><h2>Сөздер әлеміне<br>бірге саяхаттайық!</h2><p>Суретпен үйрен, тыңда және ойна.<br>Әр жаңа сөз — жаңа жетістік!</p><div class="pills"><span>8 unit + 4 қосымша бөлім</span><span>{sum(len(u['words']) for u in data)} сөз бен тіркес</span><span>Ойын + білім</span></div></div></section>'''
 
-s=h.read_text();s=re.sub(r'<section class="hero">.*?</section>',lambda m:hero,s,count=1,flags=re.S);s=s.replace('</head>','<link rel="stylesheet" href="fresh.css"></head>');h.write_text(s)
+s=h.read_text(encoding='utf-8');s=re.sub(r'<section class="hero">.*?</section>',lambda m:hero,s,count=1,flags=re.S);s=s.replace('</head>','<link rel="stylesheet" href="fresh.css"></head>');h.write_text(s,encoding='utf-8')
 shutil.copyfile(p/'fresh.css',p/'dist/fresh.css')
 (p/'dist/assets').mkdir(exist_ok=True)
 shutil.copyfile(p/'assets/study-desk.png',p/'dist/assets/study-desk.png')
 
 # Photo vocabulary assets, used by cards and games.
-s=h.read_text().replace('<script>\nconst DATA=', '<script src="photos.js"></script><script>\nconst DATA=')
+s=h.read_text(encoding='utf-8').replace('<script>\nconst DATA=', '<script src="photos.js"></script><script>\nconst DATA=')
 s=s.replace('<script src="photos.js"></script>', '<script src="photos.js"></script><script src="audio-manifest.js"></script>')
 s=s.replace('</body>', '<script src="game.js"></script></body>')
-h.write_text(s)
+h.write_text(s,encoding='utf-8')
 for f in ['photos.js','audio-manifest.js','game.js']:shutil.copyfile(p/f,p/'dist'/f)
 for f in (p/'assets').glob('*.png'):shutil.copyfile(f,p/'dist/assets'/f.name)
 shutil.copytree(p/'assets/audio',p/'dist/assets/audio',dirs_exist_ok=True)
 
 # Keep the project title only in the new prominent hero position.
-s=h.read_text()
+s=h.read_text(encoding='utf-8')
 s=re.sub(r'<header>.*?</header>','',s,count=1,flags=re.S)
 s=s.replace('My English World Lab — Grade 4','My English Word Lab — Grade 4')
 s=s.replace('My English Word Lab · Grade 4 · English — Қазақша','Grade 4 · English — Қазақша')
-h.write_text(s)
+h.write_text(s,encoding='utf-8')
