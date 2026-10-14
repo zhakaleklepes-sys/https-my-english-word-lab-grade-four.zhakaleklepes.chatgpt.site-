@@ -46,10 +46,12 @@ shutil.copyfile(p/'assets/study-desk.png',p/'dist/assets/study-desk.png')
 
 # Photo vocabulary assets, used by cards and games.
 s=h.read_text().replace('<script>\nconst DATA=', '<script src="photos.js"></script><script>\nconst DATA=')
+s=s.replace('<script src="photos.js"></script>', '<script src="photos.js"></script><script src="audio-manifest.js"></script>')
 s=s.replace('</body>', '<script src="game.js"></script></body>')
 h.write_text(s)
-for f in ['photos.js','game.js']:shutil.copyfile(p/f,p/'dist'/f)
+for f in ['photos.js','audio-manifest.js','game.js']:shutil.copyfile(p/f,p/'dist'/f)
 for f in (p/'assets').glob('*.png'):shutil.copyfile(f,p/'dist/assets'/f.name)
+shutil.copytree(p/'assets/audio',p/'dist/assets/audio',dirs_exist_ok=True)
 
 # Keep the project title only in the new prominent hero position.
 s=h.read_text()
