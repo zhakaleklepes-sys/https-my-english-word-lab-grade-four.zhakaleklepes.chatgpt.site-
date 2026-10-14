@@ -2,7 +2,13 @@ import json,pathlib
 p=pathlib.Path(__file__).parent
 data=json.loads((p/'data.json').read_text(encoding='utf-8'))
 icons=['🔁 🎨 📚 🇬🇧 500 📅 🌍 🌅 🛏️ 🏫 🥣 🍽️ 🥪 📜 💻 ➕ 📅 🎵 🚫 900 🔄 1000 🏃 📅 🔬 ⏳ ☀️ 300 📅 😴 📅 200 🔁 📺 📅','👩 🤫 🍬 🧒 🍽️ 🛒 🗑️ 🐠 👵 📢 🛏️ 👨‍👩‍👧 📣 🗑️ 🧹 👨 🦮 🪴 👔','🏸 ⚾ 🏀 🏏 🪕 🥁 🪈 🏁 🏒 🏃 🎻 🥅 🎲 ♟️ 🙈 🔢 🏃 🎾 🏉 🪢 🏑 🏓 🥁 🎻 🎶','🎒 👨‍🍳 📬 🥼 🧑‍⚕️ 👩‍🌾 🚒 🧑‍🚒 🥬 🍎 🪖 🩺 🍞 👮 📮 🥕 🚜 👔 🚐 🐾','😊 ☀️ 🇰🇿 🌳 ⛸️','🥩 🍪 🍫 🍞 🧈 🥣 🍗 ☕ 🥤 🌽 🥔 🐟 🍋 🥬 🍭 🥛 🍜 🫒 🍝 🫛 🍕 🍚 🧂 🌭 🍋 🥩 🧊 🍯 🐟 🍶 🥣','🧍 🐪 🐔 🐄 🐊 🐬 🦆 👂 🐘 👀 🐐 🦍 🙂 🐎 🌴 🥚 🦵 🦎 👄 👃 🌊 🐧 🐻‍❄️ 🧊 🐑 🌾 🐒 🦷 🐅 🐋','🏦 🥩 🏴 🌲 🇬🇧 🏨 🏝️ 🇰🇿 🏞️ 📚 ⛰️ 🏛️ ☘️ 🏞️ 🏴 🏟️ 🐉','🎭 🧑‍🚀 🏅 🔋 📷 ⚡ 🎮 🎧 💻 🧑‍🎨 🎛️ 🎤 📱 ⌚ ✍️','🦡 🐦 🐻 🦅 🪶 🐒 🍓','🐦 🌲 🐾 🌱','🪺 💧 🐢']
-# Keep every supplementary story/review as its own selectable section.
+# Show the supplementary vocabulary inside the related main units as well,
+# while preserving each story/review as its own selectable game-map section.
+for extra_name, unit_name in [('A World of Wonder 1','Module 4'),('The Cuckoo','Module 7'),('A World of Wonder 2','Module 8'),('The Dancing Tortoise','Module 8')]:
+ extra_i=next(i for i,u in enumerate(data) if u['name']==extra_name)
+ unit_i=next(i for i,u in enumerate(data) if u['name']==unit_name)
+ data[unit_i]['words'].extend([w.copy() for w in data[extra_i]['words']])
+ icons[unit_i]+=' '+icons[extra_i]
 for u,ii in zip(data,icons):
  ii=ii.split();assert len(ii)==len(u['words']),(u['name'],len(ii),len(u['words']))
  for w,ic in zip(u['words'],ii):w.append(ic)
