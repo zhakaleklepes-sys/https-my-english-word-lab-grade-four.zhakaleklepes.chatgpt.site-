@@ -9,6 +9,10 @@ for extra_name, unit_name in [('A World of Wonder 1','Module 4'),('The Cuckoo','
  unit_i=next(i for i,u in enumerate(data) if u['name']==unit_name)
  data[unit_i]['words'].extend([w.copy() for w in data[extra_i]['words']])
  icons[unit_i]+=' '+icons[extra_i]
+# After merging, keep only Unit 1–8 in the visible site.
+keep=[i for i,u in enumerate(data) if u['name'].startswith('Module ')]
+data=[data[i] for i in keep]
+icons=[icons[i] for i in keep]
 for u,ii in zip(data,icons):
  ii=ii.split();assert len(ii)==len(u['words']),(u['name'],len(ii),len(u['words']))
  for w,ic in zip(u['words'],ii):w.append(ic)
@@ -37,7 +41,7 @@ h.write_text(s,encoding='utf-8')
 for f in ["activities.js","activities.css"]: shutil.copyfile(p/f,p/"dist"/f)
 # Natural photographic hero and fresh classroom palette.
 import re
-hero=f'''<section class="hero portrait-hero"><div class="hero-title"><span class="eyebrow">GRADE 4 · ENGLISH + ҚАЗАҚША</span><h1>My English Word Lab</h1></div><figure class="hero-photo"><img src="assets/student-school-hall.png" alt="Мектеп коридорында ағылшын тілі кітабын ұстап тұрған оқушы" fetchpriority="high" width="1254" height="1254"></figure><div class="hero-copy"><h2>Сөздер әлеміне<br>бірге саяхаттайық!</h2><p>Суретпен үйрен, тыңда және ойна.<br>Әр жаңа сөз — жаңа жетістік!</p><div class="pills"><span>8 unit + 4 қосымша бөлім</span><span>{sum(len(u['words']) for u in data)} сөз бен тіркес</span><span>Ойын + білім</span></div></div></section>'''
+hero=f'''<section class="hero portrait-hero"><div class="hero-title"><span class="eyebrow">GRADE 4 · ENGLISH + ҚАЗАҚША</span><h1>My English Word Lab</h1></div><figure class="hero-photo"><img src="assets/student-school-hall.png" alt="Мектеп коридорында ағылшын тілі кітабын ұстап тұрған оқушы" fetchpriority="high" width="1254" height="1254"></figure><div class="hero-copy"><h2>Сөздер әлеміне<br>бірге саяхаттайық!</h2><p>Суретпен үйрен, тыңда және ойна.<br>Әр жаңа сөз — жаңа жетістік!</p><div class="pills"><span>8 unit</span><span>{sum(len(u['words']) for u in data)} сөз бен тіркес</span><span>Ойын + білім</span></div></div></section>'''
 
 s=h.read_text(encoding='utf-8');s=re.sub(r'<section class="hero">.*?</section>',lambda m:hero,s,count=1,flags=re.S);s=s.replace('</head>','<link rel="stylesheet" href="fresh.css"></head>');h.write_text(s,encoding='utf-8')
 shutil.copyfile(p/'fresh.css',p/'dist/fresh.css')
