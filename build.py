@@ -37,7 +37,7 @@ h.write_text(s)
 for f in ["activities.js","activities.css"]: shutil.copyfile(p/f,p/"dist"/f)
 # Natural photographic hero and fresh classroom palette.
 import re
-hero='''<section class="hero portrait-hero"><div class="hero-title"><span class="eyebrow">GRADE 4 · ENGLISH + ҚАЗАҚША</span><h1>My English World Lab</h1></div><figure class="hero-photo"><img src="assets/student-school-hall.png" alt="Мектеп коридорунда англис тили китебин кармап турган окуучу" fetchpriority="high" width="1254" height="1254"></figure><div class="hero-copy"><h2>Сөздер әлеміне<br>бірге саяхаттайық!</h2><p>Суретпен үйрен, тыңда және ойна.<br>Әр жаңа сөз — жаңа жетістік!</p><div class="pills"><span>8 unit</span><span>211 сөз бен тіркес</span><span>Ойын + білім</span></div></div></section>'''
+hero='''<section class="hero portrait-hero"><div class="hero-title"><span class="eyebrow">GRADE 4 · ENGLISH + ҚАЗАҚША</span><h1>My English Word Lab</h1></div><figure class="hero-photo"><img src="assets/student-school-hall.png" alt="Мектеп коридорунда англис тили китебин кармап турган окуучу" fetchpriority="high" width="1254" height="1254"></figure><div class="hero-copy"><h2>Сөздер әлеміне<br>бірге саяхаттайық!</h2><p>Суретпен үйрен, тыңда және ойна.<br>Әр жаңа сөз — жаңа жетістік!</p><div class="pills"><span>8 unit</span><span>211 сөз бен тіркес</span><span>Ойын + білім</span></div></div></section>'''
 
 s=h.read_text();s=re.sub(r'<section class="hero">.*?</section>',lambda m:hero,s,count=1,flags=re.S);s=s.replace('</head>','<link rel="stylesheet" href="fresh.css"></head>');h.write_text(s)
 shutil.copyfile(p/'fresh.css',p/'dist/fresh.css')
@@ -54,6 +54,6 @@ for f in (p/'assets').glob('*.png'):shutil.copyfile(f,p/'dist/assets'/f.name)
 # Keep the project title only in the new prominent hero position.
 s=h.read_text()
 s=re.sub(r'<header>.*?</header>','',s,count=1,flags=re.S)
-s=s.replace('My English Word Lab — Grade 4','My English World Lab — Grade 4')
+s=s.replace('My English World Lab — Grade 4','My English Word Lab — Grade 4')
 s=s.replace('My English Word Lab · Grade 4 · English — Қазақша','Grade 4 · English — Қазақша')
 h.write_text(s)
