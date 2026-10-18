@@ -38,6 +38,7 @@ import shutil
 h=p/"dist/index.html"
 s=h.read_text(encoding='utf-8').replace("</head>",'<link rel="stylesheet" href="activities.css"></head>').replace("</body>",'<script src="activities.js"></script></body>')
 h.write_text(s,encoding='utf-8')
+
 for f in ["activities.js","activities.css"]: shutil.copyfile(p/f,p/"dist"/f)
 # Natural photographic hero and fresh classroom palette.
 import re
@@ -63,3 +64,17 @@ s=re.sub(r'<header>.*?</header>','',s,count=1,flags=re.S)
 s=s.replace('My English World Lab — Grade 4','My English Word Lab — Grade 4')
 s=s.replace('My English Word Lab · Grade 4 · English — Қазақша','Grade 4 · English — Қазақша')
 h.write_text(s,encoding='utf-8')
+
+# Worker deployments serve browser files from dist/client and keep the
+# database API entry point in dist/server.
+client=p/'dist/client';client.mkdir(exist_ok=True)
+for name in ['index.html','activities.css','activities.js','fresh.css','game.js','photos.js','audio-manifest.js','assets']:
+ source=p/'dist'/name
+ if source.exists():
+  target=client/name
+  if target.is_dir():shutil.rmtree(target)
+  elif target.exists():target.unlink()
+  shutil.move(str(source),str(target))
+m=json.loads((p/'.openai/hosting.json').read_text(encoding='utf-8'))
+m.pop('static',None);m['d1']='DB';m['r2']=None
+(p/'.openai/hosting.json').write_text(json.dumps(m,ensure_ascii=False,indent=2),encoding='utf-8')
