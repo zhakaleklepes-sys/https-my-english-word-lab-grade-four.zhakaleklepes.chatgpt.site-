@@ -19,6 +19,20 @@ async function resultsApi(request,env){
   if(!env.DB)return json({error:'Database unavailable'},503);
   await ensureSchema(env.DB);
   await env.DB.prepare("DELETE FROM test_results WHERE created_at < datetime('now','-30 days')").run();
+  const pathname=new URL(request.url).pathname;
+  if(pathname==='/api/results/import'&&request.method==='POST'){
+    let body;try{body=await request.json()}catch{return json({error:'Invalid JSON'},400)}
+    const incoming=Array.isArray(body.results)?body.results.slice(0,500):[];
+    const cutoff=Date.now()-30*24*60*60*1000,latest=Date.now()+5*60*1000,statements=[];
+    for(const item of incoming){
+      const student=String(item.student||'').trim().replace(/\s+/g,' ').slice(0,80),unit=Number(item.unit),score=Number(item.score),total=Number(item.total),time=Date.parse(item.date);
+      if(student.length<2||!Number.isInteger(unit)||unit<0||unit>7||!Number.isInteger(score)||!Number.isInteger(total)||total<1||score<0||score>total||!Number.isFinite(time)||time<cutoff||time>latest)continue;
+      const percent=Math.round(score/total*100),createdAt=new Date(time).toISOString(),studentKey=student.toLocaleLowerCase();
+      statements.push(env.DB.prepare('INSERT INTO test_results (student, student_key, unit, score, total, percent, created_at) SELECT ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM test_results WHERE student_key=? AND unit=? AND score=? AND total=? AND created_at=?)').bind(student,studentKey,unit,score,total,percent,createdAt,studentKey,unit,score,total,createdAt));
+    }
+    if(statements.length)await env.DB.batch(statements);
+    return json({ok:true,imported:statements.length});
+  }
   if(request.method==='GET'){
     const query=await env.DB.prepare('SELECT student, unit, score, total, percent, created_at AS date FROM test_results ORDER BY created_at ASC LIMIT 5000').all();
     return json({results:query.results||[]});
@@ -35,4 +49,4 @@ async function resultsApi(request,env){
   return json({error:'Method not allowed'},405);
 }
 
-export default {async fetch(request,env){const url=new URL(request.url);if(url.pathname==='/api/results')return resultsApi(request,env);if(env.ASSETS)return env.ASSETS.fetch(request);return new Response('Not found',{status:404})}};
+export default {async fetch(request,env){const url=new URL(request.url);if(url.pathname==='/api/results'||url.pathname==='/api/results/import')return resultsApi(request,env);if(env.ASSETS)return env.ASSETS.fetch(request);return new Response('Not found',{status:404})}};
